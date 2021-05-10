@@ -1,5 +1,7 @@
-﻿using DataAccess.Abstract;
+﻿using Core.DataAccess.EntityFramework;
+using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,44 +11,26 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Concrete.EntityFramework
 {
-    public class EfCarDal : ICarDal
+    public class EfCarDal : EfEntityRepositoryBase<Car,ReCapContext> , ICarDal
     {
-        public void Add(Car entity)
+        public List<CarDetailDto> GetCarDetails()
         {
             using ReCapContext reCap = new();
-            var addedEntry = reCap.Entry(entity);
-            addedEntry.State = Microsoft.EntityFrameworkCore.EntityState.Added;
-            reCap.SaveChanges();
-        }
-
-        public void Delete(Car entity)
-        {
-            using ReCapContext reCap = new();
-            var deletedEntry = reCap.Entry(entity);
-            deletedEntry.State = Microsoft.EntityFrameworkCore.EntityState.Deleted;
-            reCap.SaveChanges();
-        }
-
-        public Car Get(Expression<Func<Car, bool>> filter)
-        {
-            using ReCapContext reCap = new();
-            return reCap.Set<Car>().SingleOrDefault(filter);
-        }
-
-        public List<Car> GetAll(Expression<Func<Car, bool>> filter = null)
-        {
-            using ReCapContext reCap = new();
-            return filter == null
-                ? reCap.Set<Car>().ToList()
-                : reCap.Set<Car>().Where(filter).ToList();
-        }
-
-        public void Update(Car entity)
-        {
-            using ReCapContext reCap = new();
-            var updatedEntry = reCap.Entry(entity);
-            updatedEntry.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            reCap.SaveChanges();
+            var result = from c in reCap.Cars
+                         join co in reCap.Colors on c.ColorId equals co.Id
+                         join b in reCap.Brands on c.BrandId equals b.Id
+                         select new CarDetailDto
+                         {
+                             BrandId = b.Id,
+                             Id = c.Id,
+                             ColorId = co.Id,
+                             DailyPrice = c.DailyPrice,
+                             Description = c.Description,
+                             ModelYear = c.ModelYear,
+                             BrandName=b.Name,
+                             ColorName=co.Name
+                         };
+            return result.ToList();
         }
     }
 }
