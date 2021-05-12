@@ -12,5 +12,7 @@ namespace Business.Constants
         public static string ListedCar = "Cars are Listed";
         public static string Failed = "Failed check fields.";
         public static string MaintenanceTime = "System is under Maintenance";
+        public static string RentalFailures = "Fails";
+        public static string Success = "Succeed";
     }
 }
