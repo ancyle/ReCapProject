@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
 
 namespace Business.Concrete
 {
@@ -20,11 +22,11 @@ namespace Business.Concrete
         {
             _rentalDal = rentalDal;
         }
-
+        [ValidationAspect(typeof(RentalValidator))]
         public IResult Add(Rental rental)
         {
-            var result = _rentalDal.Get(x=>x.CarId==1&&x.ReturnDate==null||(x.ReturnDate>DateTime.Now));
-            if (result!=null) return new ErrorResult(Messages.RentalFailures);
+            //var result = _rentalDal.Get(x=>x.CarId==1&&x.ReturnDate==null||(x.ReturnDate>DateTime.Now));
+            //if (result!=null) return new ErrorResult(Messages.RentalFailures);
             _rentalDal.Add(rental);
             return new SuccessResult(Messages.Success);
         }
