@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
-using Core.DataAccess;
 using Core.Entities.Concrete;
 
-namespace DataAccess.Abstract
+namespace Business.Abstract
 {
-    public interface IUserDal:IEntityRepository<User>
+    public interface IUserService
     {
         List<OperationClaim> GetClaims(User user);
+        void Add(User user);
+        User GetByMail(string email);
     }
 }

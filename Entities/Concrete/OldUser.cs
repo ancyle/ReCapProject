@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace Entities.Concrete
 {
-    public class User:IEntity
+    [Obsolete("Project Entities")]
+    public class OldUser:IEntity
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
