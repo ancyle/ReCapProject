@@ -12,13 +12,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Business.BusinessAspects.Autofac;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Validation;
 
 namespace Business.Concrete
 {
     public class CarManager : ICarService
     {
-        ICarDal _carDal;
+        private readonly ICarDal _carDal;
 
         public CarManager(ICarDal carDal)
         {
@@ -27,6 +28,7 @@ namespace Business.Concrete
 
         [SecuredOperation("admin")]
         [ValidationAspect(typeof(CarValidator))]
+        [CacheRemoveAspect("ICarService.Get")]
         public IResult Add(Car car)
         {
                 _carDal.Add(car);
@@ -38,6 +40,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Car>>(_carDal.GetAll(), Messages.ListedCar);
         }
 
+        [CacheAspect()]
         public IDataResult<Car> GetCar(int id)
         {
             return new SuccessDataResult<Car>(_carDal.Get(x=>x.Id==id),Messages.ListedCar);
