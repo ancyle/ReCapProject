@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Business.Abstract;
 using Core.Utilities.Helpers;
@@ -25,8 +26,8 @@ namespace WebAPI.Controllers
         public IActionResult Add([FromForm] CarImage carImage, IFormFile file)
         {
             var imageResult = _file.Upload(file, _webHostEnvironment.WebRootPath + "\\uploads\\");
-            if (!imageResult.Success) return BadRequest(imageResult.Message);
-            carImage.ImagePath = imageResult.Message;
+            if (imageResult.IsFaulted||imageResult.IsCanceled) return BadRequest(imageResult.Result.Message);
+            carImage.ImagePath = imageResult.Result.Message;
             var result = _carImageService.Add(carImage);
             if (result.Success) return Ok(result);
             return BadRequest(result);
